@@ -12,4 +12,24 @@ if __name__ == "__main__":
     print("Name: "+name)
 
     courses = ClassroomStuff.getCourses()
-    print('Courses\n'+str(courses))
+    # courseWork = ClassroomStuff.getPosts()
+    # print('Courses\n'+str(courses))
+    # print('Coursework\n'+ courseWork)
+
+    posts = []
+    for course in courses:
+        id = course['id']
+        courseMaterials = ClassroomStuff.getPosts(courseId=id)
+        for material in courseMaterials:
+            posts.append(material)
+
+    print(str(posts))
+
+    reqFile = input('Enter material name')
+
+    for post in posts:
+        # print(str(post))
+        title = post['title']
+        if reqFile.casefold() == title.casefold():
+            file_id = post['id']
+            ClassroomStuff.downloadMaterial(fileId=file_id, filename=title)
