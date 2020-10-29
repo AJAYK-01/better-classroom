@@ -1,8 +1,9 @@
 import classroom
+import drive
 
 Classroom = classroom.Classroom()
 ClassroomStuff = classroom.GetClassroomStuff(classroom=Classroom)
-
+Drive = drive.GDrive()
 
 
 if __name__ == "__main__":
@@ -23,13 +24,16 @@ if __name__ == "__main__":
         for material in courseMaterials:
             posts.append(material)
 
-    print(str(posts))
+    # print(str(posts))
 
-    reqFile = input('Enter material name')
+    reqFile = input('Enter material name: ')
 
-    for post in posts:
-        # print(str(post))
-        title = post['title']
-        if reqFile.casefold() == title.casefold():
-            file_id = post['id']
-            ClassroomStuff.downloadMaterial(fileId=file_id, filename=title)
+    while reqFile != '0':
+        for post in posts:
+            # print(str(post))
+            title = post['title']
+            if reqFile.casefold() in title.casefold():
+                file_id = post['id']
+                Drive.downloadFile(fileId=file_id, fileName=title)
+
+        reqFile = input('Enter material name: ')

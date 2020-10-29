@@ -2,7 +2,6 @@ from __future__ import print_function
 import pickle
 import os.path
 import io
-from apiclient.http import MediaIoBaseDownload
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -53,35 +52,38 @@ class GetClassroomStuff():
             results = self.gclassroom.service.courses().courseWorkMaterials().list(courseId=courseId).execute()
             global courses
             # print(str(results))
-            materials =  results['courseWorkMaterial']
-            materialsList = []
-            for material in materials:
-                # print(str(material))
-                # title = str(material['title'])
-                files = material['materials']
-                for file in files:
-                    title = str(file['driveFile']['driveFile']['title'])
-                    fileId = file['driveFile']['driveFile']['id']
-                    materialsList.append(dict({'title': title, 'id': fileId}))
+            try:
+                materials =  results['courseWorkMaterial']
+
+                global materialsList
+                materialsList = []
+                for material in materials:
+                    # print(str(material))
+                    # title = str(material['title'])
+                    files = material['materials']
+                    for file in files:
+                        try:
+                            title = str(file['driveFile']['driveFile']['title'])
+                            fileId = file['driveFile']['driveFile']['id']
+                            materialsList.append(dict({'title': title, 'id': fileId}))
+                        except Exception as e:
+                            # print(str(e))
+                            x = 1
+
+            
+            except Exception as e:
+                # print(str(e))
+                x = 1
+
 
         except Exception as e:
             materialsList=[]
-            print(str(e))
+            # print(str(e))
 
         # courses = results.get('courseWork', [])
         # print(str(courses))
         # return str(courses)
         return materialsList
-
-    def downloadMaterial(self, fileId, filename):
-        file_id = fileId
-        request = self.gclassroom.driveService.files().get_media(fileId=file_id)
-        fh = io.FileIO(filename, 'wb')
-        downloader = MediaIoBaseDownload(fh, request)
-        done = False
-        while done is False:
-            status, done = downloader.next_chunk()
-            print("Download %d%%." % int(status.progress() * 100))
 
         
     
@@ -105,30 +107,12 @@ class Classroom:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credential.json', SCOPES)
+                    'credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
 
-        # repeating process for drive credentials
-        if os.path.exists('drive_token.pickle'):
-            with open('drive_token.pickle', 'rb') as token:
-                creds = pickle.load(token)
-
-        # If there are no (valid) credentials available, let the user log in.
-        if not drive_creds or not drive_creds.valid:
-            if drive_creds and drive_creds.expired and drive_creds.refresh_token:
-                drive_creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'drive_credential.json', SCOPES)
-                drive_creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open('drive_token.pickle', 'wb') as token:
-                pickle.dump(drive_creds, token)
-
-
+        
         self.service = build('classroom', 'v1', credentials=creds)
-        self.driveService = build('drive', 'v3', credentials=drive_creds)
-
+      
