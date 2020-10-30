@@ -16,8 +16,8 @@ SCOPES = [
     'https://www.googleapis.com/auth/classroom.profile.emails',
     'https://www.googleapis.com/auth/classroom.profile.photos',
     'https://www.googleapis.com/auth/classroom.coursework.me',
-    'https://www.googleapis.com/auth/drive.file',
     'https://www.googleapis.com/auth/classroom.courseworkmaterials',
+    'https://www.googleapis.com/auth/classroom.announcements',
 # 'https://www.googleapis.com/auth/classroom.coursework.me.readonly',
 'https://www.googleapis.com/auth/classroom.coursework.students'
 ]
@@ -46,21 +46,21 @@ class GetClassroomStuff():
 
     def getPosts(self, courseId):
         """ Gets classroom posts """
-        # results = self.gclassroom.service.courses().courseWork().list(courseId=courseId).to_json()
+
+        materialsList = []
+
         try:
-            # results = self.gclassroom.service.courses().courseWork().list(courseId=courseId).execute()
             results = self.gclassroom.service.courses().courseWorkMaterials().list(courseId=courseId).execute()
-            global courses
-            # print(str(results))
             try:
                 materials =  results['courseWorkMaterial']
 
-                global materialsList
-                materialsList = []
                 for material in materials:
-                    # print(str(material))
-                    # title = str(material['title'])
-                    files = material['materials']
+                    files = []
+                    try:
+                        files = material['materials']
+                    except Exception as e:
+                        pass
+
                     for file in files:
                         try:
                             title = str(file['driveFile']['driveFile']['title'])
@@ -75,14 +75,38 @@ class GetClassroomStuff():
                 # print(str(e))
                 x = 1
 
+            results = self.gclassroom.service.courses().announcements().list(courseId=courseId).execute()
+            # print(str(results))
+            try:
+                materials =  results['announcements']
+
+                for material in materials:
+
+                    files = []
+                    try:
+                        files = material['materials']
+                    except Exception as e:
+                        pass
+
+                    for file in files:    
+                        try:
+                            title = str(file['driveFile']['driveFile']['title'])
+                            fileId = file['driveFile']['driveFile']['id']
+                            materialsList.append(dict({'title': title, 'id': fileId}))
+                        except Exception as e:
+                            # print(str(e))
+                            x = 1
+
+            
+            except Exception as e:
+                # print(str(e))
+                x = 1
 
         except Exception as e:
             materialsList=[]
             # print(str(e))
 
-        # courses = results.get('courseWork', [])
-        # print(str(courses))
-        # return str(courses)
+
         return materialsList
 
         

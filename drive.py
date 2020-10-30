@@ -25,6 +25,6 @@ class GDrive():
         
     def downloadFile(self, fileId, fileName):
         file = self.drive.CreateFile({'id': fileId})
-        if 'pdf' in file['title']:
+        if 'pdf' in file['title'] or 'ppt' in file['title'] or 'doc' in file['title']:
             print('Downloading file %s ' % file['title'])
             file.GetContentFile(fileName)
