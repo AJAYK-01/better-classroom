@@ -1,5 +1,6 @@
 credentials.json
 /__pycache__
+/materials
 token.pickle
 drive_token.pickle
 credential.json

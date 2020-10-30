@@ -1,3 +1,4 @@
+import os.path
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
@@ -24,6 +25,12 @@ class GDrive():
         
         
     def downloadFile(self, fileId, fileName):
+
+        if not os.path.exists('materials'):
+            os.makedirs('materials')
+
+        fileName = os.path.normpath('./materials/'+fileName)
+
         file = self.drive.CreateFile({'id': fileId})
         if 'pdf' in file['title'] or 'ppt' in file['title'] or 'doc' in file['title']:
             print('Downloading file %s ' % file['title'])
