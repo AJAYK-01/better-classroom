@@ -10,6 +10,7 @@ A terminal app to fetch study materials (pdf, ppt and doc for now) from Google C
 - For the first run, you will be asked to authenticate classroom as well as drive apis, using a link, do that
 - Now type the material name (for eg, if material is "UML diagrams", just typing uml is enough)
 - The file(s) will be downloaded in the 'materials' folder in project folder
-- Say goodbye to scrolling sluggish classroom website!!
+- Say goodbye to scrolling through sluggish classroom website!!
 
-#### Contributions will be appreciated :slightly_smiling_face:
+##### More updates coming soon!
+##### Contributions will be appreciated :slightly_smiling_face:
