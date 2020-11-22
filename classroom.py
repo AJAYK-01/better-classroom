@@ -44,6 +44,45 @@ class GetClassroomStuff():
 
         return courseNames
 
+    def lsdMode(self, courseId):
+        """ Gets all lsd youtube links """
+
+        materialsList = []
+
+        try:
+            # for materials posted as course work materials
+            results = self.gclassroom.service.courses().courseWorkMaterials().list(courseId=courseId).execute()
+            try:
+                materials =  results['courseWorkMaterial']
+
+                for material in materials:
+                    files = []
+                    try:
+                        files = material['materials']
+                    except Exception as e:
+                        pass
+
+                    for file in files:
+                        try:
+                            title = str(file['youtubeVideo']['title'])
+                            link = str(file['youtubeVideo']['alternateLink'])
+                            materialsList.append(dict({'title': title, 'link': link}))
+                        except Exception as e:
+                            # print(str(e))
+                            x = 1
+
+            
+            except Exception as e:
+                # print(str(e))
+                x = 1
+
+        except Exception as e:
+            # print(str(e))
+            pass
+            
+        return materialsList
+
+
     def getPosts(self, courseId):
         """ Gets classroom posts """
 
