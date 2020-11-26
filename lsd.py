@@ -16,15 +16,21 @@ if __name__ == "__main__":
 
     file = open('lsd.csv', 'w')
 
+
+    try:    
+        for course in courses:
+            id = course['id']
+            if(id == '118744664902'):
+                videos = ClassroomStuff.lsd_mode(courseId=id)
+                for video in videos:
+                    title = video['title'].replace(",", " -")
+                    link = video['link']
+                    file.write(title+','+link+'\n')
+                    # print(title+' - '+link)
+
+        print('\nSaved all youtube link materials as lsd.csv\n')
     
-    for course in courses:
-        id = course['id']
-        if(id == '118744664902'):
-            videos = ClassroomStuff.lsdMode(courseId=id)
-            for video in videos:
-                title = video['title']
-                link = video['link']
-                file.write(title+','+link+'\n')
-                # print(title+' - '+link)
+    except Exception as e:
+        print(str(e))
     
 

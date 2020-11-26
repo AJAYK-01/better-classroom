@@ -6,21 +6,18 @@ ClassroomStuff = classroom.GetClassroomStuff(classroom=Classroom)
 Drive = drive.GDrive()
 
 def fetchMaterials(reqFile, reqCourse, courses):
-
-    # I had 10 courses so :)
-    x = 1
     posts = []
     if reqCourse == '0':
         for course in courses:
             courseId = course['id']
-            courseMaterials = ClassroomStuff.getPosts(courseId=courseId)
+            courseMaterials = ClassroomStuff.get_posts(courseId=courseId)
             for material in courseMaterials:
                 posts.append(material)
 
     else:
         course = courses[int(reqCourse) - 1]
         courseId = course['id']
-        courseMaterials = ClassroomStuff.getPosts(courseId=courseId)
+        courseMaterials = ClassroomStuff.get_posts(courseId=courseId)
         for material in courseMaterials:
             posts.append(material)
 

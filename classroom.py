@@ -44,90 +44,111 @@ class GetClassroomStuff():
 
         return courseNames
 
-    def lsdMode(self, courseId):
-        """ Gets all lsd youtube links """
-
-        materialsList = []
-
+    
+    def get_coursework_materials(self, course_id):
+        ''' returns all stuff posted AS "materials" as dict '''
+        
+        results = self.gclassroom.service.courses().courseWorkMaterials().list(courseId=course_id).execute()
         try:
-            # for materials posted as course work materials
-            results = self.gclassroom.service.courses().courseWorkMaterials().list(courseId=courseId).execute()
-            try:
-                materials =  results['courseWorkMaterial']
-
-                for material in materials:
-                    files = []
-                    try:
-                        files = material['materials']
-                    except Exception as e:
-                        pass
-
-                    for file in files:
-                        try:
-                            title = str(file['youtubeVideo']['title'])
-                            link = str(file['youtubeVideo']['alternateLink'])
-                            materialsList.append(dict({'title': title, 'link': link}))
-                        except Exception as e:
-                            # print(str(e))
-                            x = 1
-
-            
-            except Exception as e:
-                # print(str(e))
-                x = 1
+            materials =  results['courseWorkMaterial']
+            return materials
 
         except Exception as e:
-            # print(str(e))
+            # print(str(e)+'line 57')
             pass
-            
-        return materialsList
+        
+        return []
+
+    
+    def get_announcements(self, course_id):
+        ''' return all announcements as dict '''
+
+        results = self.gclassroom.service.courses().announcements().list(courseId=course_id).execute()
+        try:
+            announcements =  results['announcements']
+            return announcements
+
+        except Exception as e:
+            # print(str(e)+'line 72')
+            pass
+        
+        return []
 
 
-    def getPosts(self, courseId):
+    def get_assignments(self, course_id):
+        ''' returns all posted assignments as a dict '''
+        results = self.gclassroom.service.courses().courseWork().list(courseId=course_id).execute()
+        try:
+            assignments =  results['courseWork']
+            return assignments
+        
+        except Exception as e:
+            # print(str(e)+'line 86')
+            pass
+        
+        return []
+
+
+    def get_posts(self, courseId, noassmnts=False):
         """ Gets classroom posts """
 
         materialsList = []
 
         try:
-            # for materials posted as course work materials
-            results = self.gclassroom.service.courses().courseWorkMaterials().list(courseId=courseId).execute()
-            try:
-                materials =  results['courseWorkMaterial']
 
-                for material in materials:
-                    files = []
+            ''' for materials posted as course work materials '''
+            materials =  self.get_coursework_materials(course_id=courseId)
+            for material in materials:
+                files = []
+                try:
+                    files = material['materials']
+                except Exception as e:
+                    # print(str(e)+'line 106')
+                    continue
+
+                for file in files:
                     try:
-                        files = material['materials']
+                        title = str(file['driveFile']['driveFile']['title'])
+                        fileId = file['driveFile']['driveFile']['id']
+                        materialsList.append(dict({'title': title, 'id': fileId}))
                     except Exception as e:
-                        pass
-
-                    for file in files:
-                        try:
-                            title = str(file['driveFile']['driveFile']['title'])
-                            fileId = file['driveFile']['driveFile']['id']
-                            materialsList.append(dict({'title': title, 'id': fileId}))
-                        except Exception as e:
-                            # print(str(e))
-                            x = 1
+                        # print(str(e)+'line 115')
+                        continue
 
             
-            except Exception as e:
-                # print(str(e))
-                x = 1
+
+            ''' for materials posted within announcements '''
+            materials = self.get_announcements(course_id=courseId)
+            for material in materials:
+
+                files = []
+                try:
+                    files = material['materials']
+                except Exception as e:
+                    # print(str(e)+'line 128')
+                    continue
+
+                for file in files:    
+                    try:
+                        title = str(file['driveFile']['driveFile']['title'])
+                        fileId = file['driveFile']['driveFile']['id']
+                        materialsList.append(dict({'title': title, 'id': fileId}))
+                    except Exception as e:
+                        # print(str(e)+'line 137')
+                        continue
 
 
-            # for materials posted within announcements
-            results = self.gclassroom.service.courses().announcements().list(courseId=courseId).execute()
-            try:
-                materials =  results['announcements']
-
+            if noassmnts == False:
+                ''' for materials posted within assignments '''
+                materials = self.get_assignments(course_id=courseId)
                 for material in materials:
 
                     files = []
                     try:
                         files = material['materials']
                     except Exception as e:
-                        pass
+                        # print(str(e)+'line 149')
+                        continue
 
                     for file in files:    
                         try:
@@ -135,46 +156,40 @@ class GetClassroomStuff():
                             fileId = file['driveFile']['driveFile']['id']
                             materialsList.append(dict({'title': title, 'id': fileId}))
                         except Exception as e:
-                            # print(str(e))
-                            x = 1
+                            # print(str(e)+'line 158')
+                            continue
 
-            
-            except Exception as e:
-                # print(str(e))
-                x = 1
-
-            # for materials posted within assignments
-            results = self.gclassroom.service.courses().courseWork().list(courseId=courseId).execute()
-            try:
-                materials =  results['courseWork']
-
-                for material in materials:
-
-                    files = []
-                    try:
-                        files = material['materials']
-                    except Exception as e:
-                        pass
-
-                    for file in files:    
-                        try:
-                            title = str(file['driveFile']['driveFile']['title'])
-                            fileId = file['driveFile']['driveFile']['id']
-                            materialsList.append(dict({'title': title, 'id': fileId}))
-                        except Exception as e:
-                            # print(str(e))
-                            x = 1
-
-            
-            except Exception as e:
-                # print(str(e))
-                x = 1
 
         except Exception as e:
             materialsList=[]
-            # print(str(e))
+            print(str(e))
 
 
+        return materialsList
+
+    def lsd_mode(self, courseId):
+        """ Gets all lsd youtube links """
+
+        materialsList = []
+
+        materials = self.get_coursework_materials(course_id=courseId)    
+        for material in materials:
+            files = []
+            try:
+                files = material['materials']
+            except Exception as e:
+                # print(str(e))
+                continue
+
+            for file in files:
+                try:
+                    title = str(file['youtubeVideo']['title'])
+                    link = str(file['youtubeVideo']['alternateLink'])
+                    materialsList.append(dict({'title': title, 'link': link}))
+                except Exception as e:
+                    # print(str(e))
+                    continue
+            
         return materialsList
 
         

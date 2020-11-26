@@ -31,6 +31,13 @@ class GDrive():
 
         fileName = os.path.normpath('./materials/'+fileName)
 
+        if os.path.exists(fileName):
+            try:
+                print('Material '+fileName.split('/')[-1]+' already downloaded')
+            except Exception:
+                print('Material '+fileName+' already downloaded')
+            return 
+
         file = self.drive.CreateFile({'id': fileId})
         if 'pdf' in file['title'] or 'ppt' in file['title'] or 'doc' in file['title']:
             print('Downloading file %s ' % file['title'])
