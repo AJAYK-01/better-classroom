@@ -175,17 +175,20 @@ class GetClassroomStuff():
         materials = self.get_coursework_materials(course_id=courseId)    
         for material in materials:
             files = []
+            material_topic = ""
             try:
                 files = material['materials']
+                material_topic = material['title']
             except Exception as e:
                 # print(str(e))
                 continue
 
             for file in files:
                 try:
+                    topic = material_topic
                     title = str(file['youtubeVideo']['title'])
                     link = str(file['youtubeVideo']['alternateLink'])
-                    materialsList.append(dict({'title': title, 'link': link}))
+                    materialsList.append(dict({'topic': topic, 'title': title, 'link': link}))
                 except Exception as e:
                     # print(str(e))
                     continue

@@ -23,9 +23,10 @@ if __name__ == "__main__":
             if(id == '118744664902'):
                 videos = ClassroomStuff.lsd_mode(courseId=id)
                 for video in videos:
+                    topic = video['topic'].replace(",", " -")
                     title = video['title'].replace(",", " -")
                     link = video['link']
-                    file.write(title+','+link+'\n')
+                    file.write(topic+','+title+','+link+'\n')
                     # print(title+' - '+link)
 
         print('\nSaved all youtube link materials as lsd.csv\n')
