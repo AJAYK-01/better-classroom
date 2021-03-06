@@ -16,7 +16,9 @@ A terminal app to fetch study materials (pdf, ppt and doc for now) from Google C
 - The links to the videos and the material title will be saved as a csv
 - Now Say goodbye to scrolling through sluggish classroom website!!
 
-##### The api.py gives a json containing links to all materials which can be used to make a custom frontend specific to a class.
+#### The api.py gives a json containing links to all materials which can be used to make a custom frontend specific to a class.
+#### See example at [classroom-gui](https://github.com/ashishbinu/classroom-gui)
+<br/>
 
-##### More updates coming soon!
-##### Contributions will be appreciated :slightly_smiling_face:
+### More updates coming soon!
+### Contributions will be appreciated :slightly_smiling_face:
